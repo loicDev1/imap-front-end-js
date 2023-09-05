@@ -1,10 +1,23 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./style/index.css";
+import "./style/sb-admin-2.css";
+import "./style/sb-admin-2.min.css";
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
 import ErrorPage from "./components/ErrorPage";
 import Login from "./components/Login";
+import Dashboard from "./components/Dashboard";
+import { Provider } from "react-redux";
+import { store } from "./redux/redux";
+import App from "./App";
+
+// import { library } from '@fortawesome/fontawesome-svg-core'
+// import { fab } from '@fortawesome/free-brands-svg-icons'
+// import { faCheckSquare, faCoffee } from '@fortawesome/free-solid-svg-icons'
+// library.add(fab, faCheckSquare, faCoffee)
+
 
 const router = createBrowserRouter([
   {
@@ -12,12 +25,19 @@ const router = createBrowserRouter([
     element: <Login />,
     errorElement: <ErrorPage />,
   },
+  {
+    path: "/dashboard",
+    element: <App />,
+    errorElement: <ErrorPage />,
+  },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </React.StrictMode>
 );
 
