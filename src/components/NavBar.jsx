@@ -1,5 +1,5 @@
 import React from "react";
-
+import userProfile from '../img/user.png'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoffee , faSearch , faBell } from "@fortawesome/free-solid-svg-icons";
 
@@ -173,7 +173,7 @@ function NavBar() {
               <div className="dropdown-list-image mr-3">
                 <img
                   className="rounded-circle"
-                  src="img/undraw_profile_2.svg"
+                  src={userProfile}
                   alt="..."
                 />
                 <div className="status-indicator"></div>
@@ -246,7 +246,7 @@ function NavBar() {
             </span>
             <img
               className="img-profile rounded-circle"
-              src="img/undraw_profile.svg"
+              src={userProfile}
             />
           </a>
 
