@@ -1,9 +1,20 @@
-import React from "react";
-import userProfile from '../img/user.png'
+import React, { useEffect, useState } from "react";
+import userProfile from "../img/user.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoffee , faSearch , faBell } from "@fortawesome/free-solid-svg-icons";
+import { faCoffee, faSearch, faBell } from "@fortawesome/free-solid-svg-icons";
+import { getLocalStorage , setLocalStorage , LS_USER_KEY, firstLetterUc } from "../helpers/utils";
+import { Link , useNavigate } from "react-router-dom";
 
 function NavBar() {
+  const user = getLocalStorage(LS_USER_KEY);
+  const navigate = useNavigate()
+
+  const logout = (event) => {
+    event.preventDefault();
+    localStorage.clear(LS_USER_KEY)
+    return navigate('/')
+  }
+
   return (
     <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
       <button
@@ -24,7 +35,7 @@ function NavBar() {
           />
           <div className="input-group-append">
             <button className="btn btn-primary" type="button">
-              <FontAwesomeIcon icon={faSearch}/ >
+              <FontAwesomeIcon icon={faSearch} />
             </button>
           </div>
         </div>
@@ -41,7 +52,7 @@ function NavBar() {
             aria-haspopup="true"
             aria-expanded="false"
           >
-            <FontAwesomeIcon icon={faSearch}/ >
+            <FontAwesomeIcon icon={faSearch} />
           </a>
 
           <div
@@ -70,7 +81,6 @@ function NavBar() {
         <li className="nav-item dropdown no-arrow mx-1">
           <a
             className="nav-link dropdown-toggle"
-            
             id="alertsDropdown"
             role="button"
             data-toggle="dropdown"
@@ -171,11 +181,7 @@ function NavBar() {
             </a>
             <a className="dropdown-item d-flex align-items-center" href="#">
               <div className="dropdown-list-image mr-3">
-                <img
-                  className="rounded-circle"
-                  src={userProfile}
-                  alt="..."
-                />
+                <img className="rounded-circle" src={userProfile} alt="..." />
                 <div className="status-indicator"></div>
               </div>
               <div>
@@ -234,7 +240,6 @@ function NavBar() {
         <li className="nav-item dropdown no-arrow">
           <a
             className="nav-link dropdown-toggle"
-            href="#"
             id="userDropdown"
             role="button"
             data-toggle="dropdown"
@@ -242,36 +247,37 @@ function NavBar() {
             aria-expanded="false"
           >
             <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-              Douglas McGee
+              { firstLetterUc(user.nom) + " " + user.prenom}
             </span>
-            <img
-              className="img-profile rounded-circle"
-              src={userProfile}
-            />
+            <img className="img-profile rounded-circle" src={userProfile} />
           </a>
 
           <div
             className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
             aria-labelledby="userDropdown"
           >
-            <a className="dropdown-item" href="#">
+            <a className="dropdown-item" >
               <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-              Profile
+              {/* Profile */}
+              <Link className="noline" to={"profil"}> profil </Link>
             </a>
-            <a className="dropdown-item" href="#">
+            <span className="dropdown-item" >
               <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-              Settings
-            </a>
-            <a className="dropdown-item" href="#">
+              {/* Settings */}
+              <Link className="noline" to={"setting"}> Parametres </Link>
+            </span>
+            <a className="dropdown-item noline"  >
               <i className="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-              Activity Log
+              {/* Activity Log */}
+              <Link className='noline' to={"users/reports"}> Rapports </Link>
             </a>
             <div className="dropdown-divider"></div>
             <a
               className="dropdown-item"
-              href="#"
               data-toggle="modal"
               data-target="#logoutModal"
+              style={{cursor: "pointer"}}
+              onClick={logout}
             >
               <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
               Logout

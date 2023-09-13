@@ -13,3 +13,14 @@ function Footer() {
 }
 
 export default Footer;
+
+
+
+{/* <input
+                      type=""
+                      
+                      placeholder="Role"
+                      value={firstLetterUc(user.role)}
+                      name="role"
+                      disabled={true}
+                    /> */}

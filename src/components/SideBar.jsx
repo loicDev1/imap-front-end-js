@@ -1,6 +1,15 @@
-import React from "react";
+import React from 'react';
+import { Outlet, Link } from 'react-router-dom';
+import {
+  getLocalStorage,
+  LS_USER_KEY,
+  firstLetterUc,
+  addZeroOrNo,
+} from '../helpers/utils';
 
 function SideBar() {
+  const user = getLocalStorage(LS_USER_KEY);
+
   return (
     <ul
       className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
@@ -14,6 +23,7 @@ function SideBar() {
           {/* <i className="fas fa-laugh-wink"></i> */}
         </div>
         <div className="sidebar-brand-text mx-3">Imap Admin</div>
+        {/* <Link to={`dashboard`}>Dashboard</Link> */}
       </a>
 
       <hr className="sidebar-divider my-0" />
@@ -22,24 +32,34 @@ function SideBar() {
         <a className="nav-link" href="index.html">
           <i className="fas fa-fw fa-tachometer-alt"></i>
           <span>Dashboard</span>
+          {/* <Link to={`dashboard`}>Dashboard</Link> */}
         </a>
       </li>
 
-
-      <div className="sidebar-heading">Interface</div>
+      {/* <div className="sidebar-heading">Interface</div> */}
       <hr className="sidebar-divider" />
+      {user.role === 'admin' && (
+        <>
+          <li className="nav-item">
+            <span className="nav-link">
+              <i class="fa fa-users"></i>
+              <Link className="nolinkstyle" to={`users`}>
+                Utilisateurs
+              </Link>
+            </span>
+          </li>
+          <hr className="sidebar-divider" />
+        </>
+      )}
       <li className="nav-item">
-        <a className="nav-link">
-          <i className="fas fa-fw fa-chart-area"></i>
-          <span>Utilisateurs</span>
-        </a>
-      </li>
-      <hr className="sidebar-divider" />
-      <li className="nav-item">
-        <a className="nav-link">
-          <i className="fas fa-fw fa-chart-area"></i>
-          <span>Logs</span>
-        </a>
+        <span className="nav-link">
+          <i className="fa-solid fa-bars"></i>
+          <span>
+            <Link className="nolinkstyle" to={`reports`}>
+              Reports
+            </Link>{' '}
+          </span>
+        </span>
       </li>
       <hr className="sidebar-divider" />
       <li className="nav-item">
@@ -52,7 +72,11 @@ function SideBar() {
           aria-controls="collapseUtilities"
         >
           <i className="fas fa-fw fa-wrench"></i>
-          <span>Interventions</span>
+          <span>
+            <Link className="nolinkstyle" to={`interventions`}>
+              Interventions
+            </Link>
+          </span>
         </a>
         <div
           id="collapseUtilities"

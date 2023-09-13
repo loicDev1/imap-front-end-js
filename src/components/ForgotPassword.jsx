@@ -1,48 +1,32 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from '../redux/redux';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { setLocalStorage } from '../helpers/utils';
+import axios from 'axios';
 
-function Login() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+function ForgotPassword() {
   const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleLogin(event) {
+  const resetPassword = async (event) => {
     try {
       event.preventDefault();
       setIsLoading(true);
+      setError('');
       const result = await axios({
         method: 'POST',
-        data: { email, password },
-        url: 'http://localhost:3500/api/user/auth/login',
+        data: { email },
+        url: 'http://localhost:3500/api/user/resetPassword',
       });
-      const { data } = result;
-      if (data.response?.error) throw new Error(data.response.error);
-      //dispatch(setUser(data));
-      setLocalStorage('user', data);
-
-      switch (data.role) {
-        case 'admin':
-          navigate('/dashboard/users');
-          break;
-        case 'personnel':
-          navigate('/dashboard/interventions');
-          break;
-        default:
-          break;
-      }
+      const data = await result.data;
+      if (data?.cause?.code) throw new Error(data.cause.code);
+      setIsLoading(false);
+      alert('un mailbox reset password vous a été envoyé');
     } catch (error) {
       console.log(error);
       setIsLoading(false);
       setError(error.message);
     }
-  }
+  };
 
   return (
     <div className="container">
@@ -55,10 +39,10 @@ function Login() {
                 <div className="col-lg-6">
                   <div className="p-5">
                     <div className="text-center">
-                      <h1 className="h4 text-gray-900 mb-4">Login</h1>
+                      <h1 className="h4 text-gray-900 mb-4">Reset Password</h1>
                       <span style={{ color: 'red' }}> {error} </span>
                     </div>
-                    <form className="user" onSubmit={handleLogin}>
+                    <form className="user" onSubmit={resetPassword}>
                       <div className="form-group" style={{ marginTop: '12px' }}>
                         <input
                           type="email"
@@ -67,15 +51,6 @@ function Login() {
                           aria-describedby="emailHelp"
                           placeholder="email Address..."
                           onChange={(event) => setEmail(event?.target.value)}
-                        />
-                      </div>
-                      <div className="form-group">
-                        <input
-                          type="password"
-                          className="form-control form-control-user"
-                          id="exampleInputPassword"
-                          placeholder="Password"
-                          onChange={(event) => setPassword(event?.target.value)}
                         />
                       </div>
                       <div className="form-group">
@@ -96,22 +71,17 @@ function Login() {
                       <button
                         className="btn btn-primary btn-user btn-block persoposi"
                         type="submit"
-                        disabled={isLoading}
+                        disabled={isLoading || !email}
                       >
-                        Login
+                        Reset password
                         {isLoading && <span className="loaderperso"></span>}
                       </button>
                     </form>
                     <div className="text-center">
-                      <Link className="small" to={'forgotPassword'}>
-                        Forgot Password?
+                      <Link className="small" to={'/'}>
+                        Login
                       </Link>
                     </div>
-                    {/* <div className="text-center">
-                      <a className="small" href="register.html">
-                        Create an Account!
-                      </a>
-                    </div> */}
                   </div>
                 </div>
               </div>
@@ -123,4 +93,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default ForgotPassword;
