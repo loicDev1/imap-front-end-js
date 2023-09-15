@@ -65,10 +65,10 @@ function UserReport() {
   ];
 
   const rows = allLogsByuser
-    .map((row) => {
-      if (row.user.id === user.id) {
+    .filter((row) => {
+      if (row?.user?.id === user?.id) {
         return {
-          id: row.id,
+          id: row?.id,
           description: row.description,
           typeOperation: row.typeOperation,
           createdAt: formatDate(row.createdAt),

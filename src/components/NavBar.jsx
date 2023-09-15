@@ -1,19 +1,88 @@
-import React, { useEffect, useState } from "react";
-import userProfile from "../img/user.png";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoffee, faSearch, faBell } from "@fortawesome/free-solid-svg-icons";
-import { getLocalStorage , setLocalStorage , LS_USER_KEY, firstLetterUc } from "../helpers/utils";
-import { Link , useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import userProfile from '../img/user.png';
+import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCoffee, faSearch, faBell } from '@fortawesome/free-solid-svg-icons';
+import {
+  getLocalStorage,
+  setLocalStorage,
+  LS_USER_KEY,
+  formatDate,
+  formatHours,
+  firstLetterUc,
+  socket,
+} from '../helpers/utils';
+import { Link, useNavigate } from 'react-router-dom';
 
 function NavBar() {
   const user = getLocalStorage(LS_USER_KEY);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  const [notification, setnotification] = useState();
+
+  const [allNotifications, setAllNotifications] = useState([]);
+
+  const getAllNotificationsByUser = async () => {
+    try {
+      const result = await axios({
+        method: 'GET',
+        url: `http://localhost:3500/api/notification/notificationsByUser/?token=${user.userToken}`,
+      });
+      const notifications = await result.data;
+      if (!notifications) throw new Error('error getting notifications');
+      setAllNotifications(
+        notifications
+          .reverse()
+          .filter((notif) => notif.receiver == user.id || user.role === 'admin')
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const logout = (event) => {
     event.preventDefault();
-    localStorage.clear(LS_USER_KEY)
-    return navigate('/')
-  }
+    localStorage.clear(LS_USER_KEY);
+    return navigate('/');
+  };
+
+  const receiveNotification = () => {
+    socket.on('notifyIntervention', (data) => {
+      if (user.role === 'admin') {
+        //console.log('socket data 1: ', data);
+        getAllNotificationsByUser()
+      }
+    });
+  };
+  receiveNotification();
+
+  const openNotif = async (notificationParams) => {
+    try {
+      if (!notificationParams.isOpen) {
+        const result = await axios({
+          method: 'PATCH',
+          url: `http://localhost:3500/api/notification/updateNotifStatus/${notificationParams.id}/?token=${user.userToken}`,
+        });
+        const notificationRes = result.data;
+        if (!notificationRes) throw new Error('error updating notification');
+        setAllNotifications(
+          allNotifications.map((notif) => {
+            if (notif.id == notificationRes.id) {
+              return notificationRes;
+            } else {
+              return notif;
+            }
+          })
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllNotificationsByUser();
+  }, []);
 
   return (
     <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
@@ -89,15 +158,20 @@ function NavBar() {
           >
             <i className="fas fa-bell fa-fw"></i>
             {/* <FontAwesomeIcon icon={faBell} /> */}
-            <span className="badge badge-danger badge-counter">3+</span>
+            <span className="badge badge-danger badge-counter">
+              {' '}
+              {allNotifications.length > 9
+                ? '9+'
+                : allNotifications.length}{' '}
+            </span>
           </a>
 
           <div
             className="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
             aria-labelledby="alertsDropdown"
           >
-            <h6 className="dropdown-header">Alerts Center</h6>
-            <a className="dropdown-item d-flex align-items-center" href="#">
+            <h6 className="dropdown-header">Notifications</h6>
+            {/* <a className="dropdown-item d-flex align-items-center" href="#">
               <div className="mr-3">
                 <div className="icon-circle bg-primary">
                   <i className="fas fa-file-alt text-white"></i>
@@ -109,36 +183,51 @@ function NavBar() {
                   A new monthly report is ready to download!
                 </span>
               </div>
-            </a>
-            <a className="dropdown-item d-flex align-items-center" href="#">
-              <div className="mr-3">
-                <div className="icon-circle bg-success">
-                  <i className="fas fa-donate text-white"></i>
-                </div>
-              </div>
-              <div>
-                <div className="small text-gray-500">December 7, 2019</div>
-                $290.29 has been deposited into your account!
-              </div>
-            </a>
-            <a className="dropdown-item d-flex align-items-center" href="#">
-              <div className="mr-3">
-                <div className="icon-circle bg-warning">
-                  <i className="fas fa-exclamation-triangle text-white"></i>
-                </div>
-              </div>
-              <div>
-                <div className="small text-gray-500">December 2, 2019</div>
-                Spending Alert: We've noticed unusually high spending for your
-                account.
-              </div>
-            </a>
-            <a
-              className="dropdown-item text-center small text-gray-500"
-              href="#"
-            >
-              Show All Alerts
-            </a>
+            </a> */}
+            {allNotifications.slice(0, 3).map((notification, index) => {
+              return (
+                <span
+                  key={index}
+                  className="dropdown-item d-flex align-items-center"
+                  style={{ cursor: 'pointer' }}
+                  onClick={(e) => {
+                    openNotif(notification);
+                  }}
+                >
+                  <div className="mr-3">
+                    <div className="icon-circle bg-success">
+                      <i className="fas fa-donate text-white"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <div className= {`small ${!notification.isOpen ? 'font-weight-bold' : 'text-gray-500 font-weight-bold'}`}>
+                      Le
+                      {` ${formatDate(notification.createdAt)} À ${formatHours(
+                        notification.createdAt
+                      )}`}
+                    </div>
+                    <span
+                      className={!notification.isOpen && 'font-weight-bold'}
+                    >
+                      {notification.content}
+                    </span>
+                  </div>
+                </span>
+              );
+            })}
+            {allNotifications.length > 0 ? (
+              <a
+                className="dropdown-item text-center small text-gray-500"
+                href="#"
+              >
+                Voir plus de notifications
+              </a>
+            ) : (
+              <span className="dropdown-item text-center small text-gray-500">
+                {' '}
+                Aucune notification pour le moment
+              </span>
+            )}
           </div>
         </li>
 
@@ -247,7 +336,7 @@ function NavBar() {
             aria-expanded="false"
           >
             <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-              { firstLetterUc(user.nom) + " " + user.prenom}
+              {firstLetterUc(user.nom) + ' ' + user.prenom}
             </span>
             <img className="img-profile rounded-circle" src={userProfile} />
           </a>
@@ -256,27 +345,36 @@ function NavBar() {
             className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
             aria-labelledby="userDropdown"
           >
-            <a className="dropdown-item" >
+            <a className="dropdown-item">
               <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
               {/* Profile */}
-              <Link className="noline" to={"profil"}> profil </Link>
+              <Link className="noline" to={'profil'}>
+                {' '}
+                profil{' '}
+              </Link>
             </a>
-            <span className="dropdown-item" >
+            <span className="dropdown-item">
               <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
               {/* Settings */}
-              <Link className="noline" to={"setting"}> Parametres </Link>
+              <Link className="noline" to={'setting'}>
+                {' '}
+                Parametres{' '}
+              </Link>
             </span>
-            <a className="dropdown-item noline"  >
+            <a className="dropdown-item noline">
               <i className="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
               {/* Activity Log */}
-              <Link className='noline' to={"users/reports"}> Rapports </Link>
+              <Link className="noline" to={'users/reports'}>
+                {' '}
+                Rapports{' '}
+              </Link>
             </a>
             <div className="dropdown-divider"></div>
             <a
               className="dropdown-item"
               data-toggle="modal"
               data-target="#logoutModal"
-              style={{cursor: "pointer"}}
+              style={{ cursor: 'pointer' }}
               onClick={logout}
             >
               <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>

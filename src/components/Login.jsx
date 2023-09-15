@@ -3,7 +3,11 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../redux/redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { setLocalStorage } from '../helpers/utils';
+import {
+  setLocalStorage,
+  getLocalStorage,
+  LS_USER_KEY,
+} from '../helpers/utils';
 
 function Login() {
   const dispatch = useDispatch();
@@ -25,7 +29,12 @@ function Login() {
       const { data } = result;
       if (data.response?.error) throw new Error(data.response.error);
       //dispatch(setUser(data));
-      setLocalStorage('user', data);
+      
+      if (getLocalStorage(LS_USER_KEY)) {
+        return navigate('/allreadyLoggedIn');
+      } else {
+        setLocalStorage(LS_USER_KEY, data);
+      }
 
       switch (data.role) {
         case 'admin':

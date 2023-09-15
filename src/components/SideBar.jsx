@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, NavLink } from 'react-router-dom';
 import {
   getLocalStorage,
   LS_USER_KEY,
@@ -72,11 +72,7 @@ function SideBar() {
           aria-controls="collapseUtilities"
         >
           <i className="fas fa-fw fa-wrench"></i>
-          <span>
-            <Link className="nolinkstyle" to={`interventions`}>
-              Interventions
-            </Link>
-          </span>
+          <span>Interventions</span>
         </a>
         <div
           id="collapseUtilities"
@@ -85,19 +81,13 @@ function SideBar() {
           data-parent="#accordionSidebar"
         >
           <div className="bg-white py-2 collapse-inner rounded">
-            <h6 className="collapse-header">Custom Utilities:</h6>
-            <a className="collapse-item" href="utilities-color.html">
-              Colors
-            </a>
-            <a className="collapse-item" href="utilities-border.html">
-              Borders
-            </a>
-            <a className="collapse-item" href="utilities-animation.html">
-              Animations
-            </a>
-            <a className="collapse-item" href="utilities-other.html">
-              Other
-            </a>
+            <h6 className="collapse-header">AUTRES : </h6>
+            <Link className="nolinkstyle collapse-item" to={`interventions`}>
+              Gerer Les Interventions
+            </Link>
+            <Link className="collapse-item" to={'suivieIntervention'}>
+              Suivie
+            </Link>
           </div>
         </div>
       </li>

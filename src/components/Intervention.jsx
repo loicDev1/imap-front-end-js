@@ -1,11 +1,94 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
+import {
+  getLocalStorage,
+  LS_USER_KEY,
+  firstLetterUc,
+  addZeroOrNo,
+  formatDate,
+  formatHours,
+} from '../helpers/utils';
+import axios from 'axios';
+import { DataGrid } from '@mui/x-data-grid';
+import { Link } from 'react-router-dom';
 
 function Intervention() {
+  const user = getLocalStorage(LS_USER_KEY);
+  const [allIntervention, setAllIntervention] = useState([]);
+
+  const getAllIntervention = async () => {
+    try {
+      const result = await axios({
+        method: 'GET',
+        url: `http://localhost:3500/api/intervention/?token=${user.userToken}`,
+      });
+      const intervention = await result.data;
+      setAllIntervention(intervention);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllIntervention();
+  }, []);
+
+  const columns = [
+    {
+      field: 'id',
+      headerName: 'ID',
+      width: 100,
+    },
+    {
+      field: 'titre',
+      headerName: 'TITRE',
+      width: 250,
+    },
+    {
+      field: 'description',
+      headerName: 'DESCRIPTION',
+      width: 250,
+    },
+    {
+      field: 'status',
+      headerName: 'STATUT',
+      width: 150,
+    },
+    {
+      field: 'createdAt',
+      headerName: 'EFFECTUER LE',
+      width: 150,
+    },
+    {
+      field: 'user',
+      headerName: 'PAR',
+      width: 200,
+    },
+    {
+      field: 'heure',
+      headerName: 'A',
+      width: 140,
+    },
+  ];
+
+  const rows = allIntervention
+    .map((row) => {
+      return {
+        id: row.user.id,
+        titre: row.titre,
+        description: row.description,
+        status: row.status,
+        user: firstLetterUc(row.user.nom) + ' ' + row.user.prenom,
+        createdAt: formatDate(row.createdAt),
+        heure: formatHours(row.createdAt),
+      };
+    })
+    .reverse();
+    console.log(rows);
   return (
     <>
       <div className="container-fluid">
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
-          <h1 className="h3 mb-0 text-gray-800">Interventions</h1>
+          <h1 className="h3 mb-0 text-gray-800">Gerer Interventions</h1>
           <a
             href="#"
             className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
@@ -13,6 +96,15 @@ function Intervention() {
             <i className="fas fa-download fa-sm text-white-50"></i> Generate
             Report
           </a>
+          {user.role === 'personnel' && (
+            <a className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+              <i className="fa fa-plus fa-sm text-white-50"></i>
+              <Link className="nolinkstyle" to={'new'}>
+                {' '}
+                Creer une intervention{' '}
+              </Link>
+            </a>
+          )}
         </div>
 
         <div className="row">
@@ -75,7 +167,7 @@ function Intervention() {
                           <div
                             className="progress-bar bg-info"
                             role="progressbar"
-                            style={{ width: "50%" }}
+                            style={{ width: '50%' }}
                             aria-valuenow="50"
                             aria-valuemin="0"
                             aria-valuemax="100"
@@ -113,26 +205,22 @@ function Intervention() {
           </div>
         </div>
 
-        <div className="row">
-          <div className="card shadow mb-4">
-            <div className="card-header py-3">
-              <h6 className="m-0 font-weight-bold text-primary">
-                Development Approach
-              </h6>
-            </div>
-            <div className="card-body">
-              <p>
-                SB Admin 2 makes extensive use of Bootstrap 4 utility
-                classNamees in order to reduce CSS bloat and poor page
-                performance. Custom CSS classNamees are used to create custom
-                components and custom utility classNamees.
-              </p>
-              <p className="mb-0">
-                Before working with this theme, you should become familiar with
-                the Bootstrap framework, especially the utility classNamees.
-              </p>
-            </div>
-          </div>
+        <div className="table-responsive">
+          <DataGrid
+            rows={
+              user.role === 'personnel'
+                ? rows.filter((row) => row.id == user.id).map((row) => row)
+                : rows
+            }
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 5 },
+              },
+            }}
+            pageSizeOptions={[5, 10, 15]}
+            checkboxSelection
+          />
         </div>
       </div>
     </>
