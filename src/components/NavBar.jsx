@@ -48,9 +48,12 @@ function NavBar() {
 
   const receiveNotification = () => {
     socket.on('notifyIntervention', (data) => {
-      if (user.role === 'admin') {
+      if (
+        user.role ===
+        'admin' /*|| notif.receiver == user.id permettre a un personnel de recevoir aussi les notif envoyé a son id*/
+      ) {
         //console.log('socket data 1: ', data);
-        getAllNotificationsByUser()
+        getAllNotificationsByUser();
       }
     });
   };
@@ -200,7 +203,13 @@ function NavBar() {
                     </div>
                   </div>
                   <div>
-                    <div className= {`small ${!notification.isOpen ? 'font-weight-bold' : 'text-gray-500 font-weight-bold'}`}>
+                    <div
+                      className={`small ${
+                        !notification.isOpen
+                          ? 'font-weight-bold'
+                          : 'text-gray-500 font-weight-bold'
+                      }`}
+                    >
                       Le
                       {` ${formatDate(notification.createdAt)} À ${formatHours(
                         notification.createdAt
