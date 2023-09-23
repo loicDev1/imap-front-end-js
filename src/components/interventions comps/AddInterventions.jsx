@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { ROLES, getLocalStorage, LS_USER_KEY , socket } from '../../helpers/utils';
+import {
+  ROLES,
+  getLocalStorage,
+  LS_USER_KEY,
+  socket,
+} from '../../helpers/utils';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import PdfFile from '../PdfFile';
 
 function AddInterventions() {
   const currentUser = getLocalStorage(LS_USER_KEY);
   const [createdIntervention, setCreatedIntervention] = useState({});
+  const [InterventionData, setInterventionData] = useState();
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-
-  const sendInterventionSockect = () => {
-    socket.emit('notifyIntervention' , {
-        sender: currentUser.id,
-        receiver: 2,
-        content: "Notification envoyé !",
-      })
-  }
+  const sendInterventionSockect = async (data) => {
+    socket.emit('notifyIntervention', {
+      sender: currentUser.id,
+      receiver: 2,
+      intervention : data.id
+    });
+  };
 
   const postIntervention = async () => {
     setError('');
@@ -28,9 +35,11 @@ function AddInterventions() {
       });
       const data = await result.data;
       if (data.cause?.code) throw new Error(data.cause?.code);
+      console.log('dataPe : ' , data);
+      setInterventionData(data);
       setIsLoading(false);
-      sendInterventionSockect()
-      alert('User registered successfully');
+      await sendInterventionSockect(data);
+      //alert('Intervention registered successfully');
     } catch (error) {
       console.log(error);
       setIsLoading(false);
@@ -50,9 +59,27 @@ function AddInterventions() {
     <>
       <div className="container-fluid">
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
-          <h1 className="h3 mb-0 text-gray-800">
-            Creer une intervention
-          </h1>
+          <h1 className="h3 mb-0 text-gray-800">Creer une intervention</h1>
+          {InterventionData && (
+            <PDFDownloadLink
+              document={<PdfFile interventionData={InterventionData} />}
+              filename="FORM.pdf"
+            >
+              {({ loading }) =>
+                loading ? (
+                  <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i className="fas fa-download fa-sm text-white-50"></i>
+                    Loading...
+                  </button>
+                ) : (
+                  <button className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i className="fas fa-download fa-sm text-white-50"></i>
+                    Generer La demande
+                  </button>
+                )
+              }
+            </PDFDownloadLink>
+          )}
         </div>
 
         <div

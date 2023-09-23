@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { usePDF } from 'react-to-pdf';
 import {
   getLocalStorage,
   LS_USER_KEY,
@@ -15,6 +16,7 @@ import PdfFile from '../PdfFile';
 function UserReport() {
   const user = getLocalStorage(LS_USER_KEY);
   const [allLogsByuser, setallLogsByuser] = useState([]);
+  const { toPDF, targetRef } = usePDF({ filename: 'page.pdf' });
 
   const getAllLogsByUser = async () => {
     try {
@@ -52,7 +54,7 @@ function UserReport() {
     {
       field: 'createdAt',
       headerName: 'EFFECTUER LE',
-      width: 150,
+      width: 180,
     },
     {
       field: 'heure',
@@ -86,28 +88,24 @@ function UserReport() {
       <div className="container-fluid">
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Rapports Utilisateur</h1>
-
-          <PDFDownloadLink document={<PdfFile data={allLogsByuser} />} filename="FORM.pdf">
-            {({ loading }) =>
-              loading ? (
-                'Loading' 
-              ) : (
-                'Down'
-              )
-            }
-          </PDFDownloadLink>
-
+          <button
+            className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+            onClick={() => toPDF()}
+          >
+            <i className="fas fa-download fa-sm text-white-50"></i> Generate
+            Report
+          </button>
         </div>
-        <div className="table-responsive">
+        <div className="table-responsive" ref={targetRef}>
           <DataGrid
             rows={rows}
             columns={columns}
             initialState={{
               pagination: {
-                paginationModel: { page: 0, pageSize: 5 },
+                paginationModel: { page: 0, pageSize: 20 },
               },
             }}
-            pageSizeOptions={[5, 10, 15]}
+            pageSizeOptions={[5, 10, 15, 20]}
             checkboxSelection
           />
         </div>

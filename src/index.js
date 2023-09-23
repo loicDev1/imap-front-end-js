@@ -31,6 +31,9 @@ import UserReport from './components/users comps/UserReport';
 import DetailsUser from './components/users comps/DetailsUser';
 import ForgotPassword from './components/ForgotPassword';
 import AddInterventions from './components/interventions comps/AddInterventions';
+import Notification from './components/Notification';
+import AllNotifications from './components/AllNotifications';
+import Diagnostic from './components/Diagnostic';
 
 // import { library } from '@fortawesome/fontawesome-svg-core'
 // import { fab } from '@fortawesome/free-brands-svg-icons'
@@ -71,8 +74,20 @@ const router = createBrowserRouter([
         element: <UserReport />,
       },
       {
+        path: 'users/notification/:id',
+        element: <Notification />,
+      },
+      {
+        path: 'users/notifications',
+        element: <AllNotifications />,
+      },
+      {
         path: 'users/details/:id',
         element: <DetailsUser />,
+      },
+      {
+        path: 'users/notifications/diagnostic',
+        element: <Diagnostic />,
       },
       {
         path: 'interventions',

@@ -29,7 +29,18 @@ function NavBar() {
         url: `http://localhost:3500/api/notification/notificationsByUser/?token=${user.userToken}`,
       });
       const notifications = await result.data;
+      console.log(notifications);
       if (!notifications) throw new Error('error getting notifications');
+      localStorage.setItem(
+        'allNotifications',
+        JSON.stringify(
+          notifications
+            .reverse()
+            .filter(
+              (notif) => notif.receiver == user.id || user.role === 'admin'
+            )
+        )
+      );
       setAllNotifications(
         notifications
           .reverse()
@@ -81,6 +92,11 @@ function NavBar() {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const notif = (event, notification) => {
+    //event.preventDefault();
+    localStorage.setItem('notification', JSON.stringify(notification));
   };
 
   useEffect(() => {
@@ -165,7 +181,8 @@ function NavBar() {
               {' '}
               {allNotifications.length > 9
                 ? '9+'
-                : allNotifications.length}{' '}
+                : allNotifications.filter((n) => n.isOpen === false)
+                    .length}{' '}
             </span>
           </a>
 
@@ -187,50 +204,67 @@ function NavBar() {
                 </span>
               </div>
             </a> */}
-            {allNotifications.slice(0, 3).map((notification, index) => {
-              return (
-                <span
-                  key={index}
-                  className="dropdown-item d-flex align-items-center"
-                  style={{ cursor: 'pointer' }}
-                  onClick={(e) => {
-                    openNotif(notification);
-                  }}
-                >
-                  <div className="mr-3">
-                    <div className="icon-circle bg-success">
-                      <i className="fas fa-donate text-white"></i>
+            {allNotifications
+              .filter((n) => n.isOpen === false)
+              .slice(0, 3)
+              .map((notification, index) => {
+                return (
+                  <span
+                    key={index}
+                    className="dropdown-item d-flex align-items-center"
+                    style={{ cursor: 'pointer' }}
+                    onClick={(e) => {
+                      openNotif(notification);
+                    }}
+                  >
+                    {' '}
+                    <div className="mr-3">
+                      <div className="icon-circle bg-success">
+                        <i className="fas fa-donate text-white"></i>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <div
-                      className={`small ${
-                        !notification.isOpen
-                          ? 'font-weight-bold'
-                          : 'text-gray-500 font-weight-bold'
-                      }`}
-                    >
-                      Le
-                      {` ${formatDate(notification.createdAt)} À ${formatHours(
-                        notification.createdAt
-                      )}`}
+                    <div>
+                      <div
+                        className={`small ${
+                          !notification.isOpen
+                            ? 'font-weight-bold'
+                            : 'text-gray-500 font-weight-bold'
+                        }`}
+                      >
+                        Le
+                        {` ${formatDate(
+                          notification.createdAt
+                        )} À ${formatHours(notification.createdAt)}`}
+                      </div>
+                      <Link
+                        to={`users/notification/${notification.id}`}
+                        onClick={(event) => {
+                          notif(event, notification);
+                        }}
+                      >
+                        <span
+                          className={!notification.isOpen && 'font-weight-bold'}
+                        >
+                          {`M. / Mme ${
+                            notification.sender.nom +
+                            ' ' +
+                            notification.sender.prenom
+                          } a soumis une demande d'interventon : ${
+                            notification.intervention.titre
+                          } a votre service...`}
+                        </span>
+                      </Link>
                     </div>
-                    <span
-                      className={!notification.isOpen && 'font-weight-bold'}
-                    >
-                      {notification.content}
-                    </span>
-                  </div>
-                </span>
-              );
-            })}
+                  </span>
+                );
+              })}
             {allNotifications.length > 0 ? (
-              <a
+              <Link
                 className="dropdown-item text-center small text-gray-500"
-                href="#"
+                to={'users/notifications'}
               >
                 Voir plus de notifications
-              </a>
+              </Link>
             ) : (
               <span className="dropdown-item text-center small text-gray-500">
                 {' '}
