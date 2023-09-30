@@ -62,7 +62,7 @@ function AddInterventions() {
           <h1 className="h3 mb-0 text-gray-800">Creer une intervention</h1>
           {InterventionData && (
             <PDFDownloadLink
-              document={<PdfFile interventionData={InterventionData} />}
+              document={<PdfFile interventionData={InterventionData} admin={false} userIntervention={currentUser} />}
               filename="FORM.pdf"
             >
               {({ loading }) =>

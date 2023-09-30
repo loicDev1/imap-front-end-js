@@ -176,7 +176,7 @@ function PdfDiagFile({ diagData: data }) {
                   left: '150px',
                   display: 'block',
                   width: '350px',
-                  top : '85px',
+                  top: '85px',
                   height: '85px',
                   overflow: 'auto',
                   padding: '15px 17px 15px 15px',

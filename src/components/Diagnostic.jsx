@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { ROLES, getLocalStorage, LS_USER_KEY, socket } from '../helpers/utils';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import PdfDiagFile from './PdfDiagFile'
-
+import PdfDiagFile from './PdfDiagFile';
 
 function Diagnostic() {
   const currentUser = getLocalStorage(LS_USER_KEY);
+  const currentNotification = JSON.parse(
+    localStorage.getItem('currentNotification')
+  );
+  console.log('currentNotification : ', currentNotification);
   const [diagnostic, setDiagnostic] = useState({
     problematique: '',
     analyse: '',
@@ -15,9 +18,19 @@ function Diagnostic() {
     imateriel: [],
     humain: [],
   });
-  const [diagnosticDb, setdiagnosticDb] = useState()
+  const [diagnosticDb, setdiagnosticDb] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
+
+  const sendDiagnosticSockect = async (data) => {
+    console.log(data);
+    socket.emit('notifyIntervention', {
+      sender: currentUser.id,
+      receiver: currentNotification.sender.id,
+      diagnostic: data.id,
+      intervention: currentNotification.intervention.id,
+    });
+  };
 
   const setUpdatedDiagnostic = (event) => {
     event.preventDefault();
@@ -62,7 +75,8 @@ function Diagnostic() {
       if (!data) throw new Error('Invalid');
       setdiagnosticDb(data);
       setIsLoading(false);
-      alert('le diagnostic a été soumit au personnel avec succes')
+      sendDiagnosticSockect(data);
+      alert('le diagnostic a été soumit au personnel avec succes');
     } catch (error) {
       console.log(error.message);
       setIsLoading(false);
@@ -88,30 +102,35 @@ function Diagnostic() {
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Fiche de diagnostic</h1>
 
-          <div className="col-md-3" style={{marginLeft:'10px'}}>
-          {diagnosticDb && (
-            <PDFDownloadLink
-              document={<PdfDiagFile diagData={diagnosticDb} />}
-              filename="FORM.pdf"
-            >
-              {({ loading }) =>
-                loading ? (
-                  <span onClick={(e) => {e.preventDefault()}} className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i className="fas fa-download fa-sm text-white-50"></i>
-                    Loading...
-                  </span>
-                ) : (
-                  <span className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                    <i className="fas fa-download fa-sm text-white-50"></i>
-                    {'  '}Generer La fiche de diagnostic
-                  </span>
-                )
-              }
-            </PDFDownloadLink>
-          )}
+          <div className="col-md-3" style={{ marginLeft: '10px' }}>
+            {diagnosticDb && (
+              <PDFDownloadLink
+                document={<PdfDiagFile diagData={diagnosticDb} />}
+                filename="FORM.pdf"
+              >
+                {({ loading }) =>
+                  loading ? (
+                    <span
+                      onClick={(e) => {
+                        e.preventDefault();
+                      }}
+                      className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+                    >
+                      <i className="fas fa-download fa-sm text-white-50"></i>
+                      Loading...
+                    </span>
+                  ) : (
+                    <span className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                      <i className="fas fa-download fa-sm text-white-50"></i>
+                      {'  '}Generer La fiche de diagnostic
+                    </span>
+                  )
+                }
+              </PDFDownloadLink>
+            )}
           </div>
 
-          <div className="col-md-3" style={{marginRight:'112px'}}>
+          <div className="col-md-3" style={{ marginRight: '112px' }}>
             <input
               className="btn btn-primary profile-button form-control"
               disabled={isLoading}
@@ -120,7 +139,6 @@ function Diagnostic() {
             />
             {isLoading && <span className="loaderperso2"></span>}
           </div>
-
         </div>
 
         <div

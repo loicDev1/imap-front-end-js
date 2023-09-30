@@ -41,7 +41,8 @@ const styles = StyleSheet.create({
   text: { display: 'block', width: '100%', textAlign: 'center' },
 });
 
-function PdfFile({ interventionData, admin }) {
+function PdfFile({ interventionData, admin, userIntervention }) {
+  console.log(userIntervention);
   const currentUser = getLocalStorage(LS_USER_KEY);
   return (
     <Document>
@@ -134,13 +135,13 @@ function PdfFile({ interventionData, admin }) {
           <Text style={styles.margeTextBas}>
             {' '}
             Nom(s) / qualité du demandeur :{' '}
-            {`${firstLetterUc(currentUser.nom)} ${firstLetterUc(
-              currentUser.prenom
+            {`${firstLetterUc(userIntervention.nom)} ${firstLetterUc(
+              userIntervention.prenom
             )}`}{' '}
           </Text>
           <Text style={styles.margeTextBas}>
             {' '}
-            Service d'appartenance : {firstLetterUc(currentUser.service)}{' '}
+            Service d'appartenance : {firstLetterUc(userIntervention.service)}{' '}
           </Text>
           <Text style={styles.margeTextBas}>
             {' '}

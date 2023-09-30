@@ -1,12 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { firstLetterUc, formatDate, formatHours } from '../helpers/utils';
+import { firstLetterUc, formatDate, formatHours, getLocalStorage, LS_USER_KEY } from '../helpers/utils';
 import userProfile from '../img/user.png';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import PdfFile from './PdfFile';
 
 function AllNotifications() {
+  const user = getLocalStorage(LS_USER_KEY)
   const allNotifications = JSON.parse(localStorage.getItem('allNotifications'));
+  const message =
+  user.role == 'admin'
+    ? "a soumis une demande d'interventon : "
+    : "a soumis une Fiche de diagnostic pour l'intervention : ";
   return (
     <div className="container-fluid">
       <h1 className="h3 text-gray-800" style={{ marginBottom: '40px' }}>
@@ -41,7 +46,11 @@ function AllNotifications() {
                   >
                     {firstLetterUc(notification.sender.nom) +
                       ' ' +
-                      notification.sender.prenom + ' . Le ' + formatDate(notification.createdAt)+ ' . '+ formatHours(notification.createdAt).slice(0,3)}
+                      notification.sender.prenom +
+                      ' . Le ' +
+                      formatDate(notification.createdAt) +
+                      ' . ' +
+                      formatHours(notification.createdAt).slice(0, 3)}
                   </h5>
                 </div>
               </a>
@@ -62,7 +71,16 @@ function AllNotifications() {
                   aria-labelledby="dropdownMenuLink"
                 >
                   <div className="dropdown-header">Plus d'options</div>
-                  <Link to={'diagnostic'} className="dropdown-item" >
+                  <Link
+                    to={'diagnostic'}
+                    onClick={() => {
+                      localStorage.setItem(
+                        'currentNotification',
+                        JSON.stringify(notification)
+                      );
+                    }}
+                    className="dropdown-item"
+                  >
                     Fiche de diagnostic
                   </Link>
                   <a className="dropdown-item" href="#">
@@ -76,7 +94,7 @@ function AllNotifications() {
                 {' '}
                 {`M. / Mme ${
                   notification.sender.nom + ' ' + notification.sender.prenom
-                } a soumis une demande d'interventon : ${
+                } ${message} ${
                   notification.intervention.titre
                 } a votre service...`}{' '}
               </div>
@@ -84,10 +102,17 @@ function AllNotifications() {
                 {' '}
                 Description de l'intervention{' '}
               </h5>
-              <div style={{marginBottom:'10px'}}> {notification.intervention.description} </div>
+              <div style={{ marginBottom: '10px' }}>
+                {' '}
+                {notification.intervention.description}{' '}
+              </div>
               <PDFDownloadLink
                 document={
-                  <PdfFile interventionData={notification.intervention} admin={true} />
+                  <PdfFile
+                    interventionData={notification.intervention}
+                    userIntervention={notification.sender}
+                    admin={true}
+                  />
                 }
                 filename="FORM.pdf"
               >

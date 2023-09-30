@@ -22,14 +22,19 @@ function NavBar() {
 
   const [allNotifications, setAllNotifications] = useState([]);
 
+  const message =
+    user.role == 'admin'
+      ? "a soumis une demande d'interventon : "
+      : "a soumis une Fiche de diagnostic pour l'intervention : ";
+
   const getAllNotificationsByUser = async () => {
     try {
       const result = await axios({
         method: 'GET',
-        url: `http://localhost:3500/api/notification/notificationsByUser/?token=${user.userToken}`,
+        url: `http://localhost:3500/api/notification/getNotifications/?token=${user.userToken}`,
       });
       const notifications = await result.data;
-      console.log(notifications);
+      //console.log(notifications);
       if (!notifications) throw new Error('error getting notifications');
       localStorage.setItem(
         'allNotifications',
@@ -37,14 +42,16 @@ function NavBar() {
           notifications
             .reverse()
             .filter(
-              (notif) => notif.receiver == user.id || user.role === 'admin'
+              (notif) => notif.receiver.id == user.id || user.role === 'admin'
             )
         )
       );
       setAllNotifications(
         notifications
           .reverse()
-          .filter((notif) => notif.receiver == user.id || user.role === 'admin')
+          .filter(
+            (notif) => notif.receiver.id == user.id || user.role === 'admin'
+          )
       );
     } catch (error) {
       console.log(error);
@@ -59,16 +66,23 @@ function NavBar() {
 
   const receiveNotification = () => {
     socket.on('notifyIntervention', (data) => {
-      if (
-        user.role ===
-        'admin' /*|| notif.receiver == user.id permettre a un personnel de recevoir aussi les notif envoyé a son id*/
-      ) {
-        //console.log('socket data 1: ', data);
-        getAllNotificationsByUser();
-      }
+      console.log('dataSokect : ', data);
+      getAllNotificationsByUser();
     });
   };
   receiveNotification();
+
+  // const notifyDiagnostic = () => {
+  //   socket.on('notifyDiagnostic', (data) => {
+  //     if (
+  //       user.role ===
+  //       'admin' /*|| notif.receiver == user.id permettre a un personnel de recevoir aussi les notif envoyé a son id*/
+  //     ) {
+  //       //console.log('socket data 1: ', data);
+  //       getAllNotificationsByUser();
+  //     }
+  //   });
+  // };
 
   const openNotif = async (notificationParams) => {
     try {
@@ -249,7 +263,7 @@ function NavBar() {
                             notification.sender.nom +
                             ' ' +
                             notification.sender.prenom
-                          } a soumis une demande d'interventon : ${
+                          } ${message} ${
                             notification.intervention.titre
                           } a votre service...`}
                         </span>
