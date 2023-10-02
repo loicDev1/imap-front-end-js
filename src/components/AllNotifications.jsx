@@ -17,9 +17,7 @@ import PdfFile from './PdfFile';
 function AllNotifications() {
   const user = getLocalStorage(LS_USER_KEY);
   //const allNotifications = JSON.parse(localStorage.getItem('allNotifications'));
-  const [allNotifications, setAllNotifications] = useState(
-    JSON.parse(localStorage.getItem('allNotifications'))
-  );
+  const [allNotifications, setAllNotifications] = useState([]);
   const status = [
     { status: 'initié', nom: 'initié', color: '' },
     { status: 'enCours', nom: 'en cours', color: '' },
@@ -62,7 +60,6 @@ function AllNotifications() {
     }
   };
 
-
   const getAllNotificationsByUser = async () => {
     try {
       const result = await axios({
@@ -70,22 +67,22 @@ function AllNotifications() {
         url: `http://localhost:3500/api/notification/getNotifications/?token=${user.userToken}`,
       });
       const notifications = await result.data;
-      //console.log(notifications);
+      console.log('notifications :', notifications);
       if (!notifications) throw new Error('error getting notifications');
-      localStorage.setItem(
-        'allNotifications',
-        JSON.stringify(
-          notifications
-            .filter(
-              (notif) => notif.receiver.id == user.id || user.role === 'admin'
-            )
-            .reverse()
-        )
-      );
+      // localStorage.setItem(
+      //   'allNotifications',
+      //   JSON.stringify(
+      //     notifications
+      //       .filter(
+      //         (notif) => notif.receiver.id == user.id || user.role === 'admin'
+      //       )
+      //       .reverse()
+      //   )
+      // );
       setAllNotifications(
         notifications
           .filter(
-            (notif) => notif.receiver.id == user.id || user.role === 'admin'
+            (notif) => notif.receiver.id == user.id // || user.role === 'admin' 
           )
           .reverse()
       );
@@ -95,8 +92,8 @@ function AllNotifications() {
   };
 
   useEffect(() => {
-    getAllNotificationsByUser()
-  },[])
+    getAllNotificationsByUser();
+  },[]);
 
   if (user.role == 'admin') {
     return (
@@ -158,7 +155,7 @@ function AllNotifications() {
                     aria-labelledby="dropdownMenuLink"
                   >
                     <div className="dropdown-header">Plus d'options</div>
-                    {notification.intervention.status === 'initiés' && (
+                    {notification.intervention.status === 'initié' && (
                       <Link
                         to={'diagnostic'}
                         onClick={() => {
@@ -356,7 +353,7 @@ function AllNotifications() {
                       aria-labelledby="dropdownMenuLink"
                     >
                       <div className="dropdown-header">Plus d'options</div>
-                      {user.role === 'admin' && (
+                      {/* {user.role === 'admin' && (
                         <Link
                           to={'diagnostic'}
                           onClick={() => {
@@ -369,7 +366,7 @@ function AllNotifications() {
                         >
                           Fiche de diagnostic
                         </Link>
-                      )}
+                      )} */}
                       <a className="dropdown-item" href="#">
                         Autres...
                       </a>

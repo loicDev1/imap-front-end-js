@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Link } from 'react-router-dom';
@@ -8,7 +8,9 @@ import { addZeroOrNo, getLocalStorage, LS_USER_KEY } from '../helpers/utils';
 import '../../src/timeline.css';
 
 function Notification() {
-  const notification = JSON.parse(localStorage.getItem('notification'));
+  const [notification, setNotification] = useState(
+    JSON.parse(localStorage.getItem('notification'))
+  );
   const [intervention, setIntervention] = useState(notification.intervention);
   const user = getLocalStorage(LS_USER_KEY);
   const status = [
@@ -37,6 +39,25 @@ function Notification() {
       console.log(error);
     }
   };
+
+  const getNotificationById = async () => {
+    try {
+      const result = await axios({
+        method: 'GET',
+        url: `http://localhost:3500/api/notification/getNotificationByid/${notification.id}/?token=${user.userToken}`,
+      });
+      const notif = await result.data;
+      setNotification(notif);
+      setIntervention(notif.intervention);
+      console.log('notif dans  le : ', notif);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getNotificationById();
+  }, []);
 
   return (
     <div className="container-fluid">
