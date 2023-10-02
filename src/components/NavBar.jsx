@@ -40,18 +40,18 @@ function NavBar() {
         'allNotifications',
         JSON.stringify(
           notifications
-            .reverse()
             .filter(
-              (notif) => notif.receiver.id == user.id || user.role === 'admin'
+              (notif) => notif.receiver.id == user.id || user.role === 'admin' && notif.sender.id !== user.id
             )
+            .reverse()
         )
       );
       setAllNotifications(
         notifications
-          .reverse()
           .filter(
-            (notif) => notif.receiver.id == user.id || user.role === 'admin'
+            (notif) => notif.receiver.id == user.id || user.role === 'admin' && notif.sender.id !== user.id
           )
+          .reverse()
       );
     } catch (error) {
       console.log(error);
@@ -193,7 +193,7 @@ function NavBar() {
             {/* <FontAwesomeIcon icon={faBell} /> */}
             <span className="badge badge-danger badge-counter">
               {' '}
-              {allNotifications.length > 9
+              {allNotifications.filter((n) => n.isOpen === false).length > 9
                 ? '9+'
                 : allNotifications.filter((n) => n.isOpen === false)
                     .length}{' '}
@@ -219,8 +219,8 @@ function NavBar() {
               </div>
             </a> */}
             {allNotifications
-              .filter((n) => n.isOpen === false)
-              .slice(0, 3)
+              // .filter((n) => n.isOpen === false)
+              .slice(0, 2)
               .map((notification, index) => {
                 return (
                   <span

@@ -86,6 +86,10 @@ const router = createBrowserRouter([
         element: <DetailsUser />,
       },
       {
+        path: 'users/notification/:id/diagnostic',
+        element: <Diagnostic />,
+      },
+      {
         path: 'users/notifications/diagnostic',
         element: <Diagnostic />,
       },
