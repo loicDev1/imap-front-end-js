@@ -20,6 +20,29 @@ export const MOONTH = [
 
 export const ROLES = ['personnel', 'admin'];
 
+export const USERS_SERVICES = [
+  'Morgue',
+  'Dialyse',
+  'Pharmavceie',
+  'Chirurgie',
+  'Urgences',
+  'Orthopédie',
+  'Radiologie',
+  'Gastronomie',
+  'Consulation',
+  'Odontostomatologie',
+  'Ophtalmologie',
+  'O.R.L',
+  'Pediatrie',
+  'Cuisine',
+  'Informatique',
+  'Prestation Medicales',
+  'ECONOMAT',
+  'Comptable',
+  'Accueil',
+  'Facturation',
+];
+
 export const getLocalStorage = (key) => {
   if (localStorage.getItem(key)) {
     return JSON.parse(localStorage.getItem(key));

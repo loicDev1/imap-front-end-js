@@ -1,16 +1,25 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { ROLES, getLocalStorage, LS_USER_KEY } from '../../helpers/utils';
+import {
+  ROLES,
+  USERS_SERVICES,
+  getLocalStorage,
+  LS_USER_KEY,
+} from '../../helpers/utils';
+import { COMPACT_DENSITY_FACTOR } from '@mui/x-data-grid/hooks/features/density/useGridDensity';
 
 function AddUser() {
   const currentUser = getLocalStorage(LS_USER_KEY);
-  const [createdUser, setCreatedUser] = useState({});
+  const [createdUser, setCreatedUser] = useState({
+    role: ROLES[0],
+    service: USERS_SERVICES[0],
+  });
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const createUser = async () => {
     setError('');
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const result = await axios({
         method: 'POST',
@@ -19,11 +28,11 @@ function AddUser() {
       });
       const data = await result.data;
       if (data.cause?.code) throw new Error(data.cause?.code);
-      setIsLoading(false)
+      setIsLoading(false);
       alert('User registered successfully');
     } catch (error) {
       console.log(error);
-      setIsLoading(false)
+      setIsLoading(false);
       if (error?.response?.data?.message) {
         setError(error?.response?.data?.message);
       } else {
@@ -42,15 +51,21 @@ function AddUser() {
         <h1 className="h3 mb-0 text-gray-800">Ajouter un nouvel utilisateur</h1>
       </div>
 
-      <div className="container-fluid" style={{ width: '80%',paddingTop:'10px' }}>
-        <div className="container rounded bg-white  mb-5" style={{paddingTop:'10px' }}>
+      <div
+        className="container-fluid"
+        style={{ width: '80%', paddingTop: '10px' }}
+      >
+        <div
+          className="container rounded bg-white  mb-5"
+          style={{ paddingTop: '10px' }}
+        >
           <div
             style={{
               color: 'red',
               width: '100%',
               height: '25px',
               padding: '0px 10px',
-              overflow:'auto',
+              overflow: 'auto',
               textAlign: 'center',
             }}
           >
@@ -110,9 +125,35 @@ function AddUser() {
                       placeholder="Role"
                       name="role"
                       onChange={setUpdatedUser}
+                      defaultValue={ROLES[0]}
                     >
-                      {ROLES.map((role) => {
-                        return <option value={role}> {role} </option>;
+                      {ROLES.map((role, index) => {
+                        return (
+                          <option key={index} value={role}>
+                            {' '}
+                            {role}{' '}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  <div className="col-md-12">
+                    <label className="labels">Service</label>
+                    <select
+                      type="text"
+                      className="form-control"
+                      placeholder="Service"
+                      name="service"
+                      onChange={setUpdatedUser}
+                      defaultValue={USERS_SERVICES[0]}
+                    >
+                      {USERS_SERVICES.map((service, index) => {
+                        return (
+                          <option key={index} value={service}>
+                            {' '}
+                            {service}{' '}
+                          </option>
+                        );
                       })}
                     </select>
                   </div>
