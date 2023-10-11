@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../redux/redux';
 import { Link, useNavigate } from 'react-router-dom';
+import logo from '../../src/img/logo hgy.png'
 import {
   setLocalStorage,
   getLocalStorage,
@@ -59,8 +60,10 @@ function Login() {
         <div className="col-xl-10 col-lg-12 col-md-9">
           <div className="card o-hidden border-0 shadow-lg my-5">
             <div className="card-body p-0">
-              <div className="row">
-                <div className="col-lg-6 d-none d-lg-block bg-login-image"></div>
+              <div className="row" style={{padding:'15px'}}>
+                <div className="col-lg-6 d-none d-lg-block">
+                  <img width={450} src={logo} alt="" />
+                </div>
                 <div className="col-lg-6">
                   <div className="p-5">
                     <div className="text-center">
