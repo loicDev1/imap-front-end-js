@@ -34,6 +34,9 @@ import AddInterventions from './components/interventions comps/AddInterventions'
 import Notification from './components/Notification';
 import AllNotifications from './components/AllNotifications';
 import Diagnostic from './components/Diagnostic';
+import Incidents from './components/Incidents';
+import Compagnie from './components/Compagnie';
+import SuivieIncidents from './components/SuivieIncidents';
 
 // import { library } from '@fortawesome/fontawesome-svg-core'
 // import { fab } from '@fortawesome/free-brands-svg-icons'
@@ -64,6 +67,14 @@ const router = createBrowserRouter([
       {
         path: 'users',
         element: <Users />,
+      },
+      {
+        path: 'incidents',
+        element: <Incidents />,
+      },
+      {
+        path: 'compagnie',
+        element: <Compagnie />,
       },
       {
         path: 'users/addUser',
@@ -116,6 +127,10 @@ const router = createBrowserRouter([
       {
         path: 'suivieIntervention',
         element: <SuivieIntervention />,
+      },
+      {
+        path: 'suivieIncidents',
+        element: <SuivieIncidents />,
       },
     ],
   },

@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   getLocalStorage,
   LS_USER_KEY,
   firstLetterUc,
   addZeroOrNo,
-} from "../../helpers/utils";
-import axios from "axios";
-import { Link, Outlet } from "react-router-dom";
+} from '../helpers/utils';
+import axios from 'axios';
+import { Link, Outlet } from 'react-router-dom';
 
-function Users() {
+function Compagnie() {
   const user = getLocalStorage(LS_USER_KEY);
   const [allUsers, setAllUsers] = useState([]);
 
   const getAllUsers = async () => {
     try {
       const result = await axios({
-        method: "GET",
+        method: 'GET',
         url: `http://localhost:3500/api/admin/users/?token=${user.userToken}`,
       });
       const users = await result.data;
@@ -28,7 +28,7 @@ function Users() {
   const toggleBlockedUser = async (id) => {
     try {
       const result = await axios({
-        method: "PATCH",
+        method: 'PATCH',
         url: `http://localhost:3500/api/admin/blockedUser/${id}/?token=${user.userToken}`,
       });
       const userData = await result.data;
@@ -44,7 +44,7 @@ function Users() {
   };
 
   const detail = (user) => {
-    localStorage.setItem("detailsUser", JSON.stringify(user));
+    localStorage.setItem('detailsUser', JSON.stringify(user));
   };
 
   useEffect(() => {
@@ -54,14 +54,14 @@ function Users() {
   return (
     <div className="container-fluid">
       <div className="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 className="h3 mb-0 text-gray-800">Utilisateurs</h1>
-        {/* <a className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <h1 className="h3 mb-0 text-gray-800">Compagnies</h1>
+        <a className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
           <i className="fa fa-plus fa-sm text-white-50"></i>
-          <Link className="nolinkstyle" to={"addUser"}>
-            {" "}
-            Ajouter{" "}
+          <Link className="nolinkstyle" to={'addUser'}>
+            {' '}
+            Ajouter une compagnie{' '}
           </Link>
-        </a> */}
+        </a>
       </div>
       <div className="row">
         <div className="col-xl-3 col-md-6 mb-4">
@@ -70,7 +70,7 @@ function Users() {
               <div className="row no-gutters align-items-center">
                 <div className="col mr-2">
                   <div className="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                    Nombre utilisateurs
+                    Nombre compagnies
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
                     {addZeroOrNo(allUsers.length)}
@@ -93,7 +93,7 @@ function Users() {
               <div className="row no-gutters align-items-center">
                 <div className="col mr-2">
                   <div className="text-xs font-weight-bold text-success text-uppercase mb-1">
-                    Utilisateurs Bloqués
+                    compagnies Bloqués
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
                     {addZeroOrNo(
@@ -118,7 +118,7 @@ function Users() {
               <div className="row no-gutters align-items-center">
                 <div className="col mr-2">
                   <div className="text-xs font-weight-bold text-info text-uppercase mb-1">
-                    Utilisateurs Verifiés
+                    compagnies Verifiés
                   </div>
                   <div className="row no-gutters align-items-center">
                     <div className="col-auto">
@@ -133,7 +133,7 @@ function Users() {
                         <div
                           className="progress-bar bg-info"
                           role="progressbar"
-                          style={{ width: "50%" }}
+                          style={{ width: '50%' }}
                           aria-valuenow="50"
                           aria-valuemin="0"
                           aria-valuemax="100"
@@ -160,7 +160,7 @@ function Users() {
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
                     {addZeroOrNo(
-                      allUsers.filter((user) => user.role === "admin").length
+                      allUsers.filter((user) => user.role === 'admin').length
                     )}
                   </div>
                 </div>
@@ -204,25 +204,27 @@ function Users() {
                     </label>
                   </td>
                   <td> {user.id} </td>
-                  <td> {firstLetterUc(user.nom) + " " + user.prenom} </td>
+                  <td> {firstLetterUc(user.nom)} </td>
                   <td>{user.email}</td>
                   <td>
-                    {firstLetterUc(user.role)}
+                    {firstLetterUc(user.role) == 'Personnel'
+                      ? 'Compagnie'
+                      : 'Admin'}
                     {/* <small className="d-block">
-                      Far far away, behind the word mountains
-                    </small> */}
+                        Far far away, behind the word mountains
+                      </small> */}
                   </td>
                   <td>
                     {user.emailVerified ? (
-                      <span style={{ color: "green" }}>
-                        {" "}
-                        Verifié{" "}
+                      <span style={{ color: 'green' }}>
+                        {' '}
+                        Verifié{' '}
                         <i class="fa fa-check-circle" aria-hidden="true"></i>
                       </span>
                     ) : (
-                      <span style={{ color: "red" }}>
-                        {" "}
-                        Non verifié{" "}
+                      <span style={{ color: 'red' }}>
+                        {' '}
+                        Non verifié{' '}
                         <i class="fa fa-times-circle" aria-hidden="true"></i>
                       </span>
                     )}
@@ -244,7 +246,7 @@ function Users() {
                   </td>
                   <td>
                     <a
-                      style={{ cursor: "pointer" }}
+                      style={{ cursor: 'pointer' }}
                       className="more"
                       onClick={() => {
                         detail(user);
@@ -263,4 +265,4 @@ function Users() {
   );
 }
 
-export default Users;
+export default Compagnie;

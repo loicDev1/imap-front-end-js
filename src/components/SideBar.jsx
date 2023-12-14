@@ -43,14 +43,23 @@ function SideBar() {
           <li className="nav-item">
             <span className="nav-link">
               <i class="fa fa-users"></i>
-              <Link className="nolinkstyle" to={`users`}>
-                Utilisateurs
+              <Link className="nolinkstyle" to={`compagnie`}>
+                Compagnies
               </Link>
             </span>
           </li>
           <hr className="sidebar-divider" />
         </>
       )}
+      <li className="nav-item">
+            <span className="nav-link">
+              <i class="fa fa-users"></i>
+              <Link className="nolinkstyle" to={`users`}>
+                Utilisateurs
+              </Link>
+            </span>
+          </li>
+          <hr className="sidebar-divider" />
       <li className="nav-item">
         <span className="nav-link">
           <i className="fa-solid fa-bars"></i>
@@ -72,7 +81,7 @@ function SideBar() {
           aria-controls="collapseUtilities"
         >
           <i className="fas fa-fw fa-wrench"></i>
-          <span>Interventions</span>
+          <span>Incidents</span>
         </a>
         <div
           id="collapseUtilities"
@@ -82,11 +91,11 @@ function SideBar() {
         >
           <div className="bg-white py-2 collapse-inner rounded">
             <h6 className="collapse-header">AUTRES : </h6>
-            <Link className="nolinkstyle collapse-item" to={`interventions`}>
-              Gerer Les Interventions
+            <Link className="nolinkstyle collapse-item" to={`incidents`}>
+              Gerer Les Incidents
             </Link>
-            <Link className="collapse-item" to={'suivieIntervention'}>
-              Suivie
+            <Link className="collapse-item" to={'suivieIncidents'}>
+              Suivie des Incidents
             </Link>
           </div>
         </div>
