@@ -12,8 +12,9 @@ function SideBar() {
 
   return (
     <ul
-      className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+      className="navbar-nav  sidebar sidebar-dark accordion"
       id="accordionSidebar"
+      style={{backgroundColor:'#ef7900'}}
     >
       <a
         className="sidebar-brand d-flex align-items-center justify-content-center"

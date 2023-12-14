@@ -89,8 +89,9 @@ function UserReport() {
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Rapports Utilisateur</h1>
           <button
-            className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+            className="d-none d-sm-inline-block btn btn-sm  shadow-sm"
             onClick={() => toPDF()}
+            style={{backgroundColor:'#ef7900',color:'#fff'}}
           >
             <i className="fas fa-download fa-sm text-white-50"></i> Generate
             Report

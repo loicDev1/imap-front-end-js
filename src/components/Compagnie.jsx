@@ -55,7 +55,7 @@ function Compagnie() {
     <div className="container-fluid">
       <div className="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 className="h3 mb-0 text-gray-800">Compagnies</h1>
-        <a className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <a className="d-none d-sm-inline-block btn btn-sm shadow-sm" style={{backgroundColor:'#ef7900'}}>
           <i className="fa fa-plus fa-sm text-white-50"></i>
           <Link className="nolinkstyle" to={'addUser'}>
             {' '}

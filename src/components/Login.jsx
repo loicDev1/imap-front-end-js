@@ -57,14 +57,14 @@ function Login() {
   return (
     <div className="container">
       <div className="row justify-content-center">
-        <div className="col-xl-10 col-lg-12 col-md-9">
+        <div className="">
           <div className="card o-hidden border-0 shadow-lg my-5">
             <div className="card-body p-0">
               <div className="row" style={{padding:'15px'}}>
-                <div className="col-lg-6 d-none d-lg-block">
+                {/* <div className="col-lg-6 d-none d-lg-block">
                   <img width={450} src={logo} alt="" />
-                </div>
-                <div className="col-lg-6">
+                </div> */}
+                <div className="">
                   <div className="p-5">
                     <div className="text-center">
                       <h1 className="h4 text-gray-900 mb-4">Login</h1>
@@ -106,9 +106,10 @@ function Login() {
                         </div>
                       </div>
                       <button
-                        className="btn btn-primary btn-user btn-block persoposi"
+                        className="btn  btn-user btn-block persoposi"
                         type="submit"
                         disabled={isLoading}
+                        style={{backgroundColor:'#ef7900',color:'#fff'}}
                       >
                         Login
                         {isLoading && <span className="loaderperso"></span>}

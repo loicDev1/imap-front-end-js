@@ -136,7 +136,7 @@ function NavBar() {
             aria-describedby="basic-addon2"
           />
           <div className="input-group-append">
-            <button className="btn btn-primary" type="button">
+            <button className="btn" type="button" style={{backgroundColor:'#ef7900',color:'#fff'}}>
               <FontAwesomeIcon icon={faSearch} />
             </button>
           </div>
