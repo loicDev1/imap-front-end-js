@@ -61,7 +61,7 @@ function SideBar() {
             </span>
           </li>
           <hr className="sidebar-divider" />
-      <li className="nav-item">
+       {/* <li className="nav-item">
         <span className="nav-link">
           <i className="fa-solid fa-bars"></i>
           <span>
@@ -71,7 +71,7 @@ function SideBar() {
           </span>
         </span>
       </li>
-      <hr className="sidebar-divider" />
+      <hr className="sidebar-divider" /> */}
       <li className="nav-item">
         <a
           className="nav-link collapsed"

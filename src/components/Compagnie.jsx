@@ -6,6 +6,7 @@ import {
   addZeroOrNo,
 } from '../helpers/utils';
 import axios from 'axios';
+import { config } from '../config';
 import { Link, Outlet } from 'react-router-dom';
 
 function Compagnie() {
@@ -16,9 +17,10 @@ function Compagnie() {
     try {
       const result = await axios({
         method: 'GET',
-        url: `http://localhost:3500/api/admin/users/?token=${user.userToken}`,
+        url: `${config.baseUrl}/entreprises/list/`,
       });
       const users = await result.data;
+      console.log(users);
       setAllUsers(users);
     } catch (error) {
       console.log(error);
@@ -63,7 +65,7 @@ function Compagnie() {
           </Link>
         </a>
       </div>
-      <div className="row">
+      {/* <div className="row">
         <div className="col-xl-3 col-md-6 mb-4">
           <div className="card border-left-primary shadow h-100 py-2">
             <div className="card-body">
@@ -160,7 +162,7 @@ function Compagnie() {
                   </div>
                   <div className="h5 mb-0 font-weight-bold text-gray-800">
                     {addZeroOrNo(
-                      allUsers.filter((user) => user.role === 'admin').length
+                      allUsers.filter((user, index) => user.role === 'admin').length
                     )}
                   </div>
                 </div>
@@ -171,7 +173,7 @@ function Compagnie() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="table-responsive">
         <table className="table table-striped custom-table">
@@ -183,20 +185,16 @@ function Compagnie() {
                   <div className="control__indicator"></div>
                 </label>
               </th>
-              <th scope="col">Id</th>
+              <th scope="col">id</th>
               <th scope="col">Nom</th>
-              <th scope="col">Email</th>
-              <th scope="col">Role</th>
-              <th scope="col">Status</th>
-              <th scope="col">Bloquer</th>
-              <th scope="col">Option</th>
-              <th scope="col"></th>
+              <th scope="col">Contact</th>
+              {/* <th scope="col">Details</th> */}
             </tr>
           </thead>
           <tbody>
-            {allUsers.map((user) => {
+            {allUsers.map((user, index) => {
               return (
-                <tr>
+                <tr key={index}>
                   <td>
                     <label className="control control--checkbox">
                       <input type="checkbox" />
@@ -205,46 +203,8 @@ function Compagnie() {
                   </td>
                   <td> {user.id} </td>
                   <td> {firstLetterUc(user.nom)} </td>
-                  <td>{user.email}</td>
-                  <td>
-                    {firstLetterUc(user.role) == 'Personnel'
-                      ? 'Compagnie'
-                      : 'Admin'}
-                    {/* <small className="d-block">
-                        Far far away, behind the word mountains
-                      </small> */}
-                  </td>
-                  <td>
-                    {user.emailVerified ? (
-                      <span style={{ color: 'green' }}>
-                        {' '}
-                        Verifié{' '}
-                        <i class="fa fa-check-circle" aria-hidden="true"></i>
-                      </span>
-                    ) : (
-                      <span style={{ color: 'red' }}>
-                        {' '}
-                        Non verifié{' '}
-                        <i class="fa fa-times-circle" aria-hidden="true"></i>
-                      </span>
-                    )}
-                  </td>
-                  <td className="pl-0">
-                    <div className="d-flex align-items-center">
-                      <label className="custom-control ios-switch">
-                        <input
-                          type="checkbox"
-                          checked={user.isBlocked}
-                          className="ios-switch-control-input"
-                          onChange={() => {
-                            toggleBlockedUser(user.id);
-                          }}
-                        />
-                        <span className="ios-switch-control-indicator"></span>
-                      </label>
-                    </div>
-                  </td>
-                  <td>
+                  <td> {firstLetterUc(user.contact)} </td>
+                  {/* <td>
                     <a
                       style={{ cursor: 'pointer' }}
                       className="more"
@@ -254,7 +214,7 @@ function Compagnie() {
                     >
                       <Link to={`details/${user.id}`}>Details </Link>
                     </a>
-                  </td>
+                  </td> */}
                 </tr>
               );
             })}

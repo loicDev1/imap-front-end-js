@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { config } from '../config';
 import {
   ROLES,
   USERS_SERVICES,
@@ -9,46 +10,64 @@ import {
 import { COMPACT_DENSITY_FACTOR } from '@mui/x-data-grid/hooks/features/density/useGridDensity';
 
 function AddCompagnie() {
-    const currentUser = getLocalStorage(LS_USER_KEY);
+  const currentUser = getLocalStorage(LS_USER_KEY);
   const [createdUser, setCreatedUser] = useState({
     role: ROLES[0],
     service: USERS_SERVICES[0],
   });
-  const [error, setError] = useState(false);
+  const [message, setMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [entrepriseData, setEntData] = useState({});
 
-  const createUser = async () => {
-    setError('');
-    setIsLoading(true);
+  // const createUser = async () => {
+  //   setError('');
+  //   setIsLoading(true);
+  //   try {
+  //     const result = await axios({
+  //       method: 'POST',
+  //       url: `http://localhost:3500/api/admin/registerUser/?token=${currentUser.userToken}`,
+  //       data: { ...createdUser },
+  //     });
+  //     const data = await result.data;
+  //     if (data.cause?.code) throw new Error(data.cause?.code);
+  //     setIsLoading(false);
+  //     alert('User registered successfully');
+  //   } catch (error) {
+  //     console.log(error);
+  //     setIsLoading(false);
+  //     if (error?.response?.data?.message) {
+  //       setError(error?.response?.data?.message);
+  //     } else {
+  //       setError(error?.message);
+  //     }
+  //   }
+  // };
+
+  const createCompagnie = async () => {
     try {
       const result = await axios({
         method: 'POST',
-        url: `http://localhost:3500/api/admin/registerUser/?token=${currentUser.userToken}`,
-        data: { ...createdUser },
+        url: `${config.baseUrl}/entreprises/register/`,
+        data: entrepriseData,
       });
       const data = await result.data;
-      if (data.cause?.code) throw new Error(data.cause?.code);
-      setIsLoading(false);
-      alert('User registered successfully');
+      setMessage('')
+      alert('Entreprise registered successfully');
     } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-      if (error?.response?.data?.message) {
-        setError(error?.response?.data?.message);
-      } else {
-        setError(error?.message);
-      }
+      setMessage(error.response?.data?.error || error.message)
     }
   };
 
-  const setUpdatedUser = (event) => {
-    createdUser[event.target.name] = event.target.value;
+  const setEntrepriseData = (event) => {
+    entrepriseData[event.target.name] = event.target.value;
   };
 
   return (
     <div className="container-fluid">
       <div className="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 className="h3 mb-0 text-gray-800">Ajouter une nouvelle compagnie</h1>
+        <h1 className="h3 mb-0 text-gray-800">
+          Ajouter une nouvelle compagnie
+        </h1>
       </div>
 
       <div
@@ -69,10 +88,11 @@ function AddCompagnie() {
               textAlign: 'center',
             }}
           >
-            {error}
+            { message }
           </div>
           <div className="">
             <div className="col-md" style={{ paddingBottom: '20px' }}>
+              
               <div className="">
                 <div className="row mt-2">
                   <div className="col-md-6">
@@ -82,62 +102,32 @@ function AddCompagnie() {
                       className="form-control"
                       placeholder="first name"
                       name="nom"
-                      onChange={setUpdatedUser}
+                      onChange={setEntrepriseData}
                     />
                   </div>
-                  <div className="col-md-6" style={{visibility:'hidden'}}>
-                    <label className="labels">Prenom</label>
+                  <div className="col-md-6">
+                    <label className="labels">Password</label>
                     <input
-                      type="text"
+                      type="password"
                       className="form-control"
                       placeholder="surname"
-                      value={''}
-                      name="prenom"
-                      onChange={setUpdatedUser}
+                      name="password"
+                      onChange={setEntrepriseData}
                     />
                   </div>
                 </div>
                 <div className="row mt-3">
                   <div className="col-md-12">
-                    <label className="labels">Email</label>
+                    <label className="labels">contact</label>
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="email"
-                      name="email"
-                      onChange={setUpdatedUser}
+                      placeholder="contact"
+                      name="contact"
+                      onChange={setEntrepriseData}
                     />
                   </div>
-                  <div className="col-md-12">
-                    <label className="labels">Password</label>
-                    <input
-                      type="password"
-                      className="form-control"
-                      placeholder="password"
-                      name="password"
-                      onChange={setUpdatedUser}
-                    />
-                  </div>
-                  <div className="col-md-12">
-                    <label className="labels">Role</label>
-                    <select
-                      type="text"
-                      className="form-control"
-                      placeholder="Role"
-                      name="role"
-                      onChange={setUpdatedUser}
-                      defaultValue={ROLES[0]}
-                    >
-                      {/*ROLES*/ ['compagnie' , 'admin'].map((role, index) => {
-                        return (
-                          <option key={index} value={role}>
-                            {' '}
-                            {role}{' '}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
+
                   {/* <div className="col-md-12">
                     <label className="labels">Service</label>
                     <select
@@ -145,7 +135,7 @@ function AddCompagnie() {
                       className="form-control"
                       placeholder="Service"
                       name="service"
-                      onChange={setUpdatedUser}
+                      onChange={setEntrepriseData}
                       defaultValue={USERS_SERVICES[0]}
                     >
                       {USERS_SERVICES.map((service, index) => {
@@ -162,7 +152,7 @@ function AddCompagnie() {
                     <button
                       className="btn btn-primary profile-button form-control"
                       type="button"
-                      onClick={createUser}
+                      onClick={createCompagnie}
                       disabled={isLoading}
                     >
                       Ajouter
@@ -179,4 +169,4 @@ function AddCompagnie() {
   );
 }
 
-export default AddCompagnie
+export default AddCompagnie;

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../redux/redux';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../src/img/logo hgy.png'
+import { config } from '../config';
 import {
   setLocalStorage,
   getLocalStorage,
@@ -13,7 +14,7 @@ import {
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [email, setEmail] = useState();
+  const [nom, setNom] = useState();
   const [password, setPassword] = useState();
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -24,29 +25,30 @@ function Login() {
       setIsLoading(true);
       const result = await axios({
         method: 'POST',
-        data: { email, password },
-        url: 'http://localhost:3500/api/user/auth/login',
+        data: { nom, password },
+        url: `${config.baseUrl}/admins/login/`,
       });
       const { data } = result;
       if (data.response?.error) throw new Error(data.response.error);
       //dispatch(setUser(data));
       
-      if (getLocalStorage(LS_USER_KEY)) {
-        return navigate('/allreadyLoggedIn');
-      } else {
-        setLocalStorage(LS_USER_KEY, data);
-      }
+      // if (getLocalStorage(LS_USER_KEY)) {
+      //   return navigate('/allreadyLoggedIn');
+      // } else {
+      //   setLocalStorage(LS_USER_KEY, data);
+      // }
+      navigate('/dashboard/users');
 
-      switch (data.role) {
-        case 'admin':
-          navigate('/dashboard/users');
-          break;
-        case 'personnel':
-          navigate('/dashboard/interventions');
-          break;
-        default:
-          break;
-      }
+      // switch (data.role) {
+      //   case 'admin':
+      //     navigate('/dashboard/users');
+      //     break;
+      //   case 'personnel':
+      //     navigate('/dashboard/interventions');
+      //     break;
+      //   default:
+      //     break;
+      // }
     } catch (error) {
       console.log(error);
       setIsLoading(false);
@@ -73,12 +75,12 @@ function Login() {
                     <form className="user" onSubmit={handleLogin}>
                       <div className="form-group" style={{ marginTop: '12px' }}>
                         <input
-                          type="email"
+                          type="text"
                           className="form-control form-control-user"
                           id="exampleInputEmail"
                           aria-describedby="emailHelp"
-                          placeholder="email Address..."
-                          onChange={(event) => setEmail(event?.target.value)}
+                          placeholder="nom"
+                          onChange={(event) => setNom(event?.target.value)}
                         />
                       </div>
                       <div className="form-group">
