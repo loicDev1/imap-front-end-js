@@ -7,29 +7,31 @@ import {
   formatDate,
   formatHours,
 } from '../helpers/utils';
+import { config } from '../config';
 import axios from 'axios';
 import { DataGrid } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
 
 function Incidents() {
   const user = getLocalStorage(LS_USER_KEY);
-  const [allIntervention, setAllIntervention] = useState([]);
+  const [allIncident, setAllIncident] = useState([]);
 
-  const getAllIntervention = async () => {
+  const getAllIncidents = async () => {
     try {
       const result = await axios({
         method: 'GET',
-        url: `http://localhost:3500/api/intervention/?token=${user.userToken}`,
+        url: `${config.baseUrl}/incidents/`,
       });
-      const intervention = await result.data;
-      setAllIntervention(intervention);
+      const incident = await result.data;
+      console.log(incident);
+      setAllIncident(incident);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    getAllIntervention();
+    getAllIncidents();
   }, []);
 
   const columns = [
@@ -39,18 +41,23 @@ function Incidents() {
       width: 100,
     },
     {
-      field: 'titre',
-      headerName: 'TITRE',
+      field: 'title',
+      headerName: 'TITLE',
       width: 250,
     },
     {
-      field: 'description',
-      headerName: 'DESCRIPTION',
+      field: 'type',
+      headerName: 'TYPE',
       width: 250,
     },
     {
-      field: 'status',
-      headerName: 'STATUT',
+      field: 'media',
+      headerName: 'MEDIA',
+      width: 250,
+    },
+    {
+      field: 'tel',
+      headerName: 'TEL',
       width: 150,
     },
     {
@@ -59,25 +66,21 @@ function Incidents() {
       width: 150,
     },
     {
-      field: 'user',
-      headerName: 'PAR',
-      width: 200,
-    },
-    {
       field: 'heure',
       headerName: 'A',
       width: 140,
     },
   ];
 
-  const rows = allIntervention
+  const rows = allIncident
     .map((row) => {
       return {
-        id: row.user.id,
-        titre: row.titre,
-        description: row.description,
-        status: row.status,
-        user: firstLetterUc(row.user.nom) + ' ' + row.user.prenom,
+        id: row.id,
+        title: row.title,
+        type: row.type,
+        media: row.media,
+        tel: row.tel,
+       // user: firstLetterUc(row.user.nom) + ' ' + row.user.prenom,
         createdAt: formatDate(row.createdAt),
         heure: formatHours(row.createdAt),
       };
@@ -89,17 +92,25 @@ function Incidents() {
       <div className="container-fluid">
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Gerer Incidents</h1>
-
-          {user.role === 'personnel' && (
+          <a className="d-none d-sm-inline-block btn btn-sm shadow-sm" style={{backgroundColor:'#ef7900'}}>
+          <i className="fa fa-plus fa-sm text-white-50"></i>
+          <Link className="nolinkstyle" to={'addIncident'}>
+            {' '}
+            Ajouter un incident{' '}
+          </Link>
+        </a>
+          {/* {user.role === 'personnel' && (
             <a className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
               <i className="fa fa-plus fa-sm text-white-50"></i>
               <Link className="nolinkstyle" to={'new'}>
                 {' '}
-                Creer une intervention{' '}
+                Creer une incident{' '}
               </Link>
             </a>
-          )}
+          )} */}
         </div>
+
+
 
         <div className="row">
           <div className="col-xl-3 col-md-6 mb-4">

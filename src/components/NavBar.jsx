@@ -191,13 +191,13 @@ function NavBar() {
           >
             <i className="fas fa-bell fa-fw"></i>
             {/* <FontAwesomeIcon icon={faBell} /> */}
-            <span className="badge badge-danger badge-counter">
+            {/* <span className="badge badge-danger badge-counter">
               {' '}
               {allNotifications.filter((n) => n.isOpen === false).length > 9
                 ? '9+'
                 : allNotifications.filter((n) => n.isOpen === false)
                     .length}{' '}
-            </span>
+            </span> */}
           </a>
 
           <div
@@ -218,7 +218,7 @@ function NavBar() {
                 </span>
               </div>
             </a> */}
-            {allNotifications
+            {/* {allNotifications
               // .filter((n) => n.isOpen === false)
               .slice(0, 2)
               .map((notification, index) => {
@@ -271,8 +271,8 @@ function NavBar() {
                     </div>
                   </span>
                 );
-              })}
-            {allNotifications.length > 0 ? (
+              })} */}
+            {/* {allNotifications.length > 0 ? (
               <Link
                 className="dropdown-item text-center small text-gray-500"
                 to={'users/notifications'}
@@ -284,7 +284,7 @@ function NavBar() {
                 {' '}
                 Aucune notification pour le moment
               </span>
-            )}
+            )} */}
           </div>
         </li>
 
@@ -392,9 +392,9 @@ function NavBar() {
             aria-haspopup="true"
             aria-expanded="false"
           >
-            <span className="mr-2 d-none d-lg-inline text-gray-600 small">
+            {/* <span className="mr-2 d-none d-lg-inline text-gray-600 small">
               {firstLetterUc(user.nom) + ' ' + user.prenom}
-            </span>
+            </span> */}
             <img className="img-profile rounded-circle" src={userProfile} />
           </a>
 

@@ -37,6 +37,7 @@ function Login() {
       // } else {
       //   setLocalStorage(LS_USER_KEY, data);
       // }
+      setLocalStorage(LS_USER_KEY, {...data , role : 'admin'})
       navigate('/dashboard/users');
 
       // switch (data.role) {

@@ -37,6 +37,7 @@ import Diagnostic from './components/Diagnostic';
 import Incidents from './components/Incidents';
 import Compagnie from './components/Compagnie';
 import SuivieIncidents from './components/SuivieIncidents';
+import AddIncident from './components/AddIncident'
 import AddCompagnie from './components/AddCompagnie';
 
 // import { library } from '@fortawesome/fontawesome-svg-core'
@@ -72,6 +73,10 @@ const router = createBrowserRouter([
       {
         path: 'incidents',
         element: <Incidents />,
+      },
+      {
+        path: 'incidents/addIncident',
+        element: <AddIncident />,
       },
       {
         path: 'compagnie',

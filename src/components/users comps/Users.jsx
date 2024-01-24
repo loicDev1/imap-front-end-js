@@ -6,6 +6,7 @@ import {
   addZeroOrNo,
 } from "../../helpers/utils";
 import axios from "axios";
+import { config } from "../../config";
 import { Link, Outlet } from "react-router-dom";
 
 function Users() {
@@ -16,9 +17,10 @@ function Users() {
     try {
       const result = await axios({
         method: "GET",
-        url: `http://localhost:3500/api/admin/users/?token=${user.userToken}`,
+        url: `${config.baseUrl}/users/login/users/`,
       });
       const users = await result.data;
+      console.log('users ++++ : ', users);
       setAllUsers(users);
     } catch (error) {
       console.log(error);
@@ -28,8 +30,8 @@ function Users() {
   const toggleBlockedUser = async (id) => {
     try {
       const result = await axios({
-        method: "PATCH",
-        url: `http://localhost:3500/api/admin/blockedUser/${id}/?token=${user.userToken}`,
+        method: "PUT",
+        url: `${config.baseUrl}/users/login/blockUser/?id=${id}`,
       });
       const userData = await result.data;
       if (userData) {
@@ -186,10 +188,8 @@ function Users() {
               <th scope="col">Id</th>
               <th scope="col">Nom</th>
               <th scope="col">Email</th>
-              <th scope="col">Role</th>
-              <th scope="col">Status</th>
+              <th scope="col">Tel</th>
               <th scope="col">Bloquer</th>
-              <th scope="col">Option</th>
               <th scope="col"></th>
             </tr>
           </thead>
@@ -206,33 +206,13 @@ function Users() {
                   <td> {user.id} </td>
                   <td> {firstLetterUc(user.nom) + " " + user.prenom} </td>
                   <td>{user.email}</td>
-                  <td>
-                    {firstLetterUc(user.role)}
-                    {/* <small className="d-block">
-                      Far far away, behind the word mountains
-                    </small> */}
-                  </td>
-                  <td>
-                    {user.emailVerified ? (
-                      <span style={{ color: "green" }}>
-                        {" "}
-                        Verifié{" "}
-                        <i class="fa fa-check-circle" aria-hidden="true"></i>
-                      </span>
-                    ) : (
-                      <span style={{ color: "red" }}>
-                        {" "}
-                        Non verifié{" "}
-                        <i class="fa fa-times-circle" aria-hidden="true"></i>
-                      </span>
-                    )}
-                  </td>
+                  <td>{user.tel}</td>
                   <td className="pl-0">
                     <div className="d-flex align-items-center">
                       <label className="custom-control ios-switch">
                         <input
                           type="checkbox"
-                          checked={user.isBlocked}
+                          checked={user.isBlocked || false}
                           className="ios-switch-control-input"
                           onChange={() => {
                             toggleBlockedUser(user.id);
@@ -242,7 +222,7 @@ function Users() {
                       </label>
                     </div>
                   </td>
-                  <td>
+                  {/* <td>
                     <a
                       style={{ cursor: "pointer" }}
                       className="more"
@@ -252,7 +232,7 @@ function Users() {
                     >
                       <Link to={`details/${user.id}`}>Details </Link>
                     </a>
-                  </td>
+                  </td> */}
                 </tr>
               );
             })}
